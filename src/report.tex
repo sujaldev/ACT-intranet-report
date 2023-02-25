@@ -5,8 +5,8 @@
 % Preamble
 \documentclass[11pt]{article}
 
-\title{\textbf{Critical Misconfiguration in the Firewall Rules of \\ Customer Intranet}}
-\author{Sujal Singh \\ \href{mailto:contact@sujal.dev}{contact@sujal.dev}}
+\title{\textbf{Critical Misconfiguration in the Firewall Rules of \\ ACT's Customer Intranet}}
+\author{\href{https://github.com/sujaldev}{Sujal Singh} \\ \href{mailto:contact@sujal.dev}{contact@sujal.dev}}
 \date{}
 
 \pagenumbering{gobble}
@@ -15,19 +15,30 @@
 
 % Packages
 \usepackage[letterpaper, total={7.2in, 9in}]{geometry}
-\usepackage[hidelinks]{hyperref}
+\usepackage[
+    pdfusetitle,
+    pdfsubject={Bug Report},
+    pdfauthor={Sujal Singh},
+    hidelinks
+]{hyperref}
 \usepackage[section]{placeins}
 \usepackage{mathptmx}
 \usepackage{graphicx}
 \usepackage[outputdir=../output]{minted}
 \usepackage{enumitem}
+\usepackage{titlesec}
 \usepackage{lipsum}
+
+% Section Title Format
+\titleformat{\section}[hang]{\Large\bfseries}{\thesection.\hspace{0.5em}}{0pt}{}
+
 
 % Document
 \begin{document}
     \maketitle
 
     \section*{Abstract}
+    \addcontentsline{toc}{section}{Abstract}
     This report details a critical misconfiguration in the firewall rules of the local network of customers created by
     ACT Fibernet to share a single public IPv4 address with multiple customers behind a CGNAT.\ There exists no rule
     that blocks communication between two clients connected to this network.\ This is currently allowing customers
@@ -35,7 +46,7 @@
 
     \begin{figure}[!htb]
         \centering
-        \includegraphics[width=140pt]{./diagrams/network-hierarchy}
+        \includegraphics[width=220pt]{./diagrams/network-hierarchy}
         \caption{Customer Intranet}
         \label{fig:1}
     \end{figure}
@@ -59,8 +70,8 @@ $ traceroute example.com
  2  10.195.0.1 (10.195.0.1)  4.526 ms  4.690 ms
 ...
         \end{minted}
-        This is usually going to be the second hop in output, in this case it's \texttt{10.195.0.1}.\ This assumes that
-        there exists a router between you and ACT's router and you're not directly plugging in the WAN cable coming
+        This is usually going to be the second hop in the output, in this case it's \texttt{10.195.0.1}.\ This assumes
+        that there exists a router between you and ACT's router and you're not directly plugging in the WAN cable coming
         to your home to the device you're using to run traceroute.
 
         \item One can now begin scanning the network by running the following (change the IP address according to
@@ -70,25 +81,62 @@ $ nmap -p 80 10.195.0.0-255
         \end{minted}
         In this example, I've chosen to only scan a small portion of the network with devices that have port 80 open
         so that the scan is fairly quick.\ A full network scan would take a very long time.
+
+        \item Once the network scan is complete, visit each host that has port 80 open in a web browser (keep in mind
+        that port 80 doesn't necessarily imply an http server) and one will encounter router management portals, CCTV
+        cameras (some cameras have particular ports open, identifying those and running the scan to look for only
+        those ports can quickly find many open cameras of the same build which likely have the same default password),
+        NAS devices, printers, etc.\
     \end{enumerate}
 
 
+    \section{Proof of Concept}\label{sec:poc}
+    \begin{figure}[!htb]
+        \centering
+        \includegraphics[width=250]{./poc/tplink-archer-c5-1}
+        \caption{TP Link router with common default passwords}
+        \label{fig:2}
+    \end{figure}
+    \begin{figure}[!htb]
+        \centering
+        \includegraphics[width=250]{./poc/mikrotik}
+        \caption{MikroTik router}
+        \label{fig:3}
+    \end{figure}
+    \begin{figure}[!htb]
+        \centering
+        \includegraphics[width=250]{./poc/cp-plus-ezykam}
+        \caption{CP Plus CCTV with common default passwords}
+        \label{fig:4}
+    \end{figure}
+    \begin{figure}[!htb]
+        \centering
+        \includegraphics[width=250]{./poc/hikvision-1}
+        \caption{HikVision CCTV}
+        \label{fig:5}
+    \end{figure}
+
+    \textbf{Note:} there exist many more examples in the attached documents.
+
+
     \section{Impact}\label{sec:impact}
-    Depending on what kind of device one is able to access via this technique, there are various highly severe threats
-    posed by this.
+    The lack of existence of a firewall rule blocking inter-customer communication exposes ACT's customers to
+    innumerable critical attacks.\ The severity of threats vary with the type of device compromised by the attacker.\
+    The following are only some of the potential threats that arise as a result of exposing devices on a customer
+    intranet of this type.
 
     \subsection{Routers}\label{subsec:routers}
     An attacker will easily be able to access routers with default passwords, giving the attacker various information
     such as the WiFI password and SSID, hostnames of the hosts connected to the LAN, etc.\
 
     \subsubsection{DNS Hijacking}
-    An attacker can configure a malicious DNS server to be advertised via DHCP on the target's router, allowing it
+    An attacker can configure a malicious DNS server to be advertised via DHCP on the target's router, allowing it to
     direct any domain to any IP address.\ The attacker could also simply just monitor which sites a user visits,
     which violates the privacy of the target.
 
     \subsubsection{Phishing}
     Having control over the DNS server will allow the attacker to employ phishing attacks on the target, including
-    but not limited to net \textbf{banking sites, email, other such critical services.}
+    but not limited to \textbf{net banking sites, email, other such critical services.}
 
     \subsubsection{Fake CA Certificate}
     Once the attacker has configured a malicious DNS servers it can redirect the target to a fake warning page which
@@ -102,9 +150,19 @@ $ nmap -p 80 10.195.0.0-255
     \subsubsection{PPPoE Credentials}
     The attacker might be able to figure out the \textbf{name, email, mobile number, address} of the target.\ The
     attacker can obtain the PPPoE credentials of the target by accessing the target's router.\ Feeding bogus PPPoE
-    credentials to target's router so that there is no conflict for the next step.\
-    Visiting \href{https://selfcare.actcorp.in}{selfcare.actcorp.in} and logging in with the obtained credentials
-    will reveal the aforementioned information.
+    credentials to target's router so that there is no conflict for the next step.\ Visiting
+    \href{https://selfcare.actcorp.in}{selfcare.actcorp.in} and logging in with the obtained credentials will reveal
+    the aforementioned information.
+
+    \subsubsection{Port Forwarding}
+    The attacker can setup port forwarding rules to any device such as a printer, CCTV camera, smart door locks,
+    computers, etc.\ on the target's network.\ Being able to control a smart lock remotely is particularly dangerous.
+
+    \subsubsection{DDOS}
+    The attacker can employ various combinations of the above points to compromise an entire fleet of devices,
+    creating a botnet.\ The botnet can be used for several purposes including a DDOS attack originating from the IP
+    addresses registered under ACT's name which not only has the potential to damage ACT's reputation globally but
+    also create a lack of trust from it's customers.
 
     \subsection{CCTV Cameras}\label{subsec:cctv-cameras}
     An attacker can gain access to CCTV cameras having default passwords (which is fairly common) connected to the
@@ -114,9 +172,10 @@ $ nmap -p 80 10.195.0.0-255
 
 
     \section{Proposed Solution}\label{sec:proposed-solution}
-    The solution to this problem is fairly straightforward.\ ACT Fibernet could setup a firewall rule disallowing
-    client-to-client communication on that network since it does not serve any purpose at all and exposes the network
-    to a plethora of attacks.\ Even if two clients need to communicate with each other on this intranet for whatever
-    reason, a simple exception rule could be setup after assigning both of those clients a private static IP\@.
+    The solution to this problem is fairly straightforward.\ ACT Fibernet could setup a firewall rule that blocks any
+    customer-to-customer communication on that network since it does not serve any purpose and exposes the network to a
+    plethora of attacks.\ Even if two clients need to communicate with each other on this intranet for whatever
+    reason, a simple exception rule could be setup after assigning both of those clients a private static IP or setup
+    an entire block of IP addresses to allow such communication.
 
 \end{document}
