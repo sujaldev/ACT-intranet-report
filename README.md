@@ -21,6 +21,12 @@ to an intranet address, except for the gateway. Running nmap now doesn't seem to
 
 > Fun fact: I think ACT might be using Huawei network hardware!
 
+## Credits
+
+Thanks to [Karan Saini](https://github.com/qurbat) who suggested
+[these](https://github.com/sujaldev/ACT-intranet-report/compare/54042db4c1a7b1638669d880b0898d31cafcd39e...e04b561b913d305b231c68b5f6747e2299975b0c)
+changes.
+
 ## License
 
 <a rel="license" href="http://creativecommons.org/licenses/by-sa/4.0/"><img alt="Creative Commons License" style="border-width:0" src="https://i.creativecommons.org/l/by-sa/4.0/88x31.png" /></a><br />
