@@ -1,6 +1,6 @@
 # ACT Fibernet Vulnerability Disclosure
 
-Disclosing a misconfiguration in the ACT's intranet of customers. Compiled PDF hosted
+Disclosing a misconfiguration in ACT's intranet of customers. Compiled PDF hosted
 [here](https://files.sujal.dev/act-intranet-report.pdf).
 
 [![report-preview](https://files.sujal.dev/act/preview.png)](https://files.sujal.dev/act/report.pdf)
