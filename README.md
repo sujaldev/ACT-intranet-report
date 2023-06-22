@@ -21,6 +21,13 @@ to an intranet address, except for the gateway. Running nmap now doesn't seem to
 
 > Fun fact: I think ACT might be using Huawei network hardware!
 
+## Build
+
+You have to add the `-shell-escape` flag for minted to work:
+
+> `minted` requires that LaTeX run with the -shell-escape flag. This has security implications; it allows LaTeX to run
+> external programs. **-shell-escape should only be used with documents that you trust.**
+
 ## Credits
 
 Thanks to [Karan Saini](https://github.com/qurbat) who suggested
