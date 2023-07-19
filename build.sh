@@ -2,7 +2,7 @@ create_deployment
 update_deployment in_progress "https://pdf.sujal.dev/act/report.pdf"
 
 # Setup virtualenv for pygments
-virtualenv venv
+pip3 install virtualenv && virtualenv venv
 source venv/bin/activate
 pip install Pygments
 
