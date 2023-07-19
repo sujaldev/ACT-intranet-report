@@ -1,6 +1,11 @@
 create_deployment
 update_deployment in_progress "https://pdf.sujal.dev/act/report.pdf"
 
+# Setup virtualenv for pygments
+virtualenv venv
+source venv/bin/activate
+pip install Pygments
+
 # Build PDF
 mkdir -p ./build/act
 cd src/ || exit
