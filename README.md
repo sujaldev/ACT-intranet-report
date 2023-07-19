@@ -1,20 +1,20 @@
 # ACT Fibernet Vulnerability Disclosure
 
 Disclosing a misconfiguration in ACT's intranet of customers. Compiled PDF hosted
-[here](https://files.sujal.dev/act-intranet-report.pdf).
+[here](https://pdf.sujal.dev/act/report.pdf).
 
-[![report-preview](https://files.sujal.dev/act/preview.png)](https://files.sujal.dev/act/report.pdf)
+[![report-preview](https://pdf.sujal.dev/act/preview-1.png)](https://pdf.sujal.dev/act/report.pdf)
 
 ## Current status
 
-While I haven't received any updates officially from ACT Fibernet, the issues seems to be fixed.
+While I haven't received any updates officially from ACT Fibernet, the issue seems to be fixed.
 
-> **Note** It is possible that the issue only seems fixed to me because ACT has put me in a different network since
-> I've upgraded to a static public IP plan. However, I still do get a private IP behind a CGNAT (to not make it too
-> easy for websites to track me) by creating another WAN interface in opnsense called WAN_DHCP which requests an IP over
-> DHCP, unlike the WAN_PPPoE interface which requests it over PPPoE and gets the public static IP. All server traffic is
-> routed through the PPPoE interface and all other traffic is routed through the DHCP interface. I've been wondering if
-> I could use both to double the bandwidth!?
+> **Note** It is possible that the issue only seems fixed to me because ACT Fibernet has put me in a different network
+> since I've upgraded to a static public IP plan. However, I still do get a private IP behind a CGNAT (to not make it
+> too easy for websites to track me) by creating another WAN interface in opnsense called WAN_DHCP which requests an IP
+> over DHCP, unlike the WAN_PPPoE interface which requests it over PPPoE and gets the public static IP. All server
+> traffic is routed through the PPPoE interface, and all other traffic is routed through the DHCP interface. I've been
+> wondering if I could use both to double the bandwidth!?
 
 I'm guessing they implemented a firewall rule to silently drop packets originating from an intranet address destined
 to an intranet address, except for the gateway. Running nmap now doesn't seem to be able to discover any devices.
@@ -25,8 +25,8 @@ to an intranet address, except for the gateway. Running nmap now doesn't seem to
 
 You have to add the `-shell-escape` flag for minted to work:
 
-> `minted` requires that LaTeX run with the -shell-escape flag. This has security implications; it allows LaTeX to run
-> external programs. **-shell-escape should only be used with documents that you trust.**
+> `minted` requires that LaTeX run with the `-shell-escape` flag. This has security implications; it allows LaTeX to run
+> external programs, **-shell-escape should only be used with documents that you trust.**
 
 ## Credits
 
